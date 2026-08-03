@@ -21,7 +21,7 @@ public class ItemEstoqueController {
         return ResponseEntity.ok(itemEstoqueService.salvar(item));
     }
 
-    // Ver estoque completo (GET http://localhost:8080/api/estoque)
+    // Ver estoque completo (GET http://localhost:8080/api/estoque)55
     @GetMapping
     public ResponseEntity<List<ItemEstoque>> listarTudo() {
         return ResponseEntity.ok(itemEstoqueService.listarTodos());
@@ -30,7 +30,7 @@ public class ItemEstoqueController {
     // Dar baixa ao entregar uniforme (PUT http://localhost:8080/api/estoque/1/baixa?quantidade=2)
     @PutMapping("/{id}/baixa")
     public ResponseEntity<ItemEstoque> darBaixa(@PathVariable Long id, @RequestParam Integer quantidade) {
-        ItemEstoque itemAtualizado = itemEstoqueService.darBaixaNoEstoque(id, quantidade);
+        ItemEstoque itemAtualizado = itemEstoqueService.consumirItem(id, quantidade);
         return ResponseEntity.ok(itemAtualizado);
     }
 }
