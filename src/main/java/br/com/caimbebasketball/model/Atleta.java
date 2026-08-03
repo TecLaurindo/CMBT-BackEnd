@@ -5,21 +5,27 @@ import br.com.caimbebasketball.model.enums.StatusFinanceiro;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Entity // Diz ao Spring que esta classe será uma tabela no PostgreSQL
-@Table(name = "tb_atleta") // Define o nome da tabela no banco de dados
+@Entity
+@Table(name = "tb_atleta")
 public class Atleta {
 
-    @Id // Define que este campo é a Chave Primária (ID único)
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // O PostgreSQL vai auto-incrementar o ID (1, 2, 3...)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150) // Campo obrigatório e com limite de caracteres
+    @Column(nullable = false, length = 150)
     private String nome;
+
+    @Column(length = 14)
+    private String cpf;
 
     private String fotoPerfilUrl;
 
-    @Column(name = "data_nascimento", nullable = false)
+    @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
+
+    private String categoria;
+    private String posicao;
 
     // --- Saúde e Biometria ---
     private Double altura;
@@ -28,34 +34,42 @@ public class Atleta {
     @Column(name = "tipo_sanguineo", length = 3)
     private String tipoSanguineo;
 
-    @Column(columnDefinition = "TEXT") // Permite textos longos para histórico médico
+    @Column(columnDefinition = "TEXT")
     private String observacoesMedicas;
 
     // --- Escolar e Técnico ---
     private String escola;
     private String serie;
 
-    @Enumerated(EnumType.STRING) // Salva o texto do Enum (ex: "INICIANTE") no banco
+    @Enumerated(EnumType.STRING)
     private NivelBasquete nivel;
 
     // --- Financeiro ---
     @Enumerated(EnumType.STRING)
     private StatusFinanceiro status;
 
-    // --- Construtores (Obrigatório para o JPA) ---
+    // --- Construtores ---
     public Atleta() {
     }
 
     // --- Getters e Setters ---
-    // (Você pode gerar automaticamente na sua IDE com Alt+Insert ou usando o Lombok no futuro)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getPosicao() { return posicao; }
+    public void setPosicao(String posicao) { this.posicao = posicao; }
 
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
