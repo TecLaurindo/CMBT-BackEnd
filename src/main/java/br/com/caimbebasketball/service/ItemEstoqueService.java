@@ -12,33 +12,37 @@ public class ItemEstoqueService {
     @Autowired
     private ItemEstoqueRepository itemEstoqueRepository;
 
-    // Cadastrar um novo lote de uniformes ou atualizar dados básicos
-    public ItemEstoque salvar(ItemEstoque item) {
-        return itemEstoqueRepository.save(item);
-    }
-
-    // Listar tudo o que tem no estoque (útil para a tabela do administrador)
     public List<ItemEstoque> listarTodos() {
         return itemEstoqueRepository.findAll();
     }
 
-    // REGRA DE NEGÓCIO: Dar baixa no estoque quando um uniforme for entregue
-    public ItemEstoque darBaixaNoEstoque(Long itemId, Integer quantidadeEntregue) {
-        // 1. Busca o item no banco de dados
-        ItemEstoque item = itemEstoqueRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item de estoque não encontrado! ID: " + itemId));
+    public ItemEstoque salvar(ItemEstoque item) {
+        return itemEstoqueRepository.save(item);
+    }
 
-        // 2. Valida se temos quantidade suficiente para entregar
-        if (item.getQuantidadeDisponivel() < quantidadeEntregue) {
-            throw new RuntimeException("Estoque insuficiente para o item: " + item.getDescricao() +
-                    ". Quantidade disponível: " + item.getQuantidadeDisponivel());
+    // Regra 1: Baixa no Estoque
+    public ItemEstoque consumirItem(Long id, int quantidadeConsumida) {
+        ItemEstoque item = itemEstoqueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item não encontrado no estoque!"));
+
+        if (item.getQuantidadeDisponivel() < quantidadeConsumida) {
+            throw new IllegalArgumentException("Quantidade insuficiente em estoque! Disponível: " + item.getQuantidadeDisponivel());
         }
 
-        // 3. Subtrai a quantidade antiga pela quantidade entregue
-        int novaQuantidade = item.getQuantidadeDisponivel() - quantidadeEntregue;
-        item.setQuantidadeDisponivel(novaQuantidade);
+        item.setQuantidadeDisponivel(item.getQuantidadeDisponivel() - quantidadeConsumida);
+        return itemEstoqueRepository.save(item);
+    }
 
-        // 4. Salva a nova quantidade atualizada no PostgreSQL
+    // Regra 2: Reposição de Estoque
+    public ItemEstoque reporItem(Long id, int quantidadeAdicionada) {
+        ItemEstoque item = itemEstoqueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item não encontrado no estoque!"));
+
+        if (quantidadeAdicionada <= 0) {
+            throw new IllegalArgumentException("A quantidade a ser adicionada deve ser maior que zero.");
+        }
+
+        item.setQuantidadeDisponivel(item.getQuantidadeDisponivel() + quantidadeAdicionada);
         return itemEstoqueRepository.save(item);
     }
 }
