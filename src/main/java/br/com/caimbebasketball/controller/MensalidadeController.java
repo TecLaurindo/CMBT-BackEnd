@@ -18,13 +18,13 @@ public class MensalidadeController {
     // Criar uma nova cobrança (POST http://localhost:8080/api/mensalidades)
     @PostMapping
     public ResponseEntity<Mensalidade> criar(@RequestBody Mensalidade mensalidade) {
-        return ResponseEntity.ok(mensalidadeService.criarMensalidade(mensalidade));
+        return ResponseEntity.ok(mensalidadeService.gerarMensalidade(mensalidade));
     }
 
     // Botão de Baixa Manual (PUT http://localhost:8080/api/mensalidades/1/pagar)
     @PutMapping("/{id}/pagar")
     public ResponseEntity<Mensalidade> confirmarPagamentoManual(@PathVariable Long id) {
-        Mensalidade mensalidadePaga = mensalidadeService.registrarPagamentoManual(id);
+        Mensalidade mensalidadePaga = mensalidadeService.registrarPagamento(id);
         return ResponseEntity.ok(mensalidadePaga);
     }
 
