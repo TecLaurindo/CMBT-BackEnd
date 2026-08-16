@@ -1,6 +1,7 @@
 package br.com.caimbebasketball.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -11,26 +12,13 @@ public class Mensalidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relacionamento: Muitas mensalidades pertencem a um Atleta
     @ManyToOne
     @JoinColumn(name = "atleta_id", nullable = false)
     private Atleta atleta;
 
-    @Column(name = "mes_referencia", nullable = false, length = 7)
-    private String mesReferencia; // Salvaremos no formato "AAAA-MM", ex: "2026-06"
-
-    @Column(nullable = false)
-    private Double valor;
-
-    @Column(nullable = false)
-    private Boolean pago = false; // Começa como falso (não pago) por padrão
-
-    @Column(name = "data_pagamento")
-    private LocalDate dataPagamento; // Registra o dia em que o administrador marcou como pago
-
-    // Construtor padrão obrigatório para o JPA
-    public Mensalidade() {
-    }
+    private BigDecimal valor;
+    private LocalDate dataVencimento;
+    private Boolean pago;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -39,15 +27,12 @@ public class Mensalidade {
     public Atleta getAtleta() { return atleta; }
     public void setAtleta(Atleta atleta) { this.atleta = atleta; }
 
-    public String getMesReferencia() { return mesReferencia; }
-    public void setMesReferencia(String mesReferencia) { this.mesReferencia = mesReferencia; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 
-    public Double getValor() { return valor; }
-    public void setValor(Double valor) { this.valor = valor; }
+    public LocalDate getDataVencimento() { return dataVencimento; }
+    public void setDataVencimento(LocalDate dataVencimento) { this.dataVencimento = dataVencimento; }
 
     public Boolean getPago() { return pago; }
     public void setPago(Boolean pago) { this.pago = pago; }
-
-    public LocalDate getDataPagamento() { return dataPagamento; }
-    public void setDataPagamento(LocalDate dataPagamento) { this.dataPagamento = dataPagamento; }
 }

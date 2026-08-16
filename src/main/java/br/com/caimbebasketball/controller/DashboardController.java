@@ -34,6 +34,7 @@ public class DashboardController {
         long eventos = eventoRepository.count();
         long estoque = itemEstoqueRepository.count();
 
+        // Consulta direta no banco de dados
         BigDecimal valorPago = mensalidadeRepository.somarMensalidadesPagas();
         BigDecimal valorPendente = mensalidadeRepository.somarMensalidadesPendentes();
 

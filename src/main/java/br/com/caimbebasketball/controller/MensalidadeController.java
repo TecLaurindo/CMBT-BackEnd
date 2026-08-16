@@ -1,10 +1,12 @@
 package br.com.caimbebasketball.controller;
 
 import br.com.caimbebasketball.model.Mensalidade;
-import br.com.caimbebasketball.service.MensalidadeService;
+import br.com.caimbebasketball.repository.MensalidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -13,24 +15,32 @@ import java.util.List;
 public class MensalidadeController {
 
     @Autowired
-    private MensalidadeService mensalidadeService;
+    private MensalidadeRepository mensalidadeRepository;
 
-    // Criar uma nova cobrança (POST http://localhost:8080/api/mensalidades)
-    @PostMapping
-    public ResponseEntity<Mensalidade> criar(@RequestBody Mensalidade mensalidade) {
-        return ResponseEntity.ok(mensalidadeService.gerarMensalidade(mensalidade));
+    // Retorna pendências por padrão ao carregar
+    @GetMapping("/pendentes")
+    public ResponseEntity<List<Mensalidade>> listarPendentes() {
+        return ResponseEntity.ok(mensalidadeRepository.findByPagoFalseOrderByDataVencimentoAsc());
     }
 
-    // Botão de Baixa Manual (PUT http://localhost:8080/api/mensalidades/1/pagar)
+    // Filtro por Mês X e Ano Y
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<Mensalidade>> filtrarPorMesEAno(
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer ano) {
+
+        int mesBusca = (mes != null) ? mes : LocalDate.now().getMonthValue();
+        int anoBusca = (ano != null) ? ano : LocalDate.now().getYear();
+
+        return ResponseEntity.ok(mensalidadeRepository.buscarPorMesEAno(mesBusca, anoBusca));
+    }
+
+    // Dar baixa / Pagar mensalidade
     @PutMapping("/{id}/pagar")
-    public ResponseEntity<Mensalidade> confirmarPagamentoManual(@PathVariable Long id) {
-        Mensalidade mensalidadePaga = mensalidadeService.registrarPagamento(id);
-        return ResponseEntity.ok(mensalidadePaga);
-    }
-
-    // Buscar histórico de um aluno (GET http://localhost:8080/api/mensalidades/atleta/1)
-    @GetMapping("/atleta/{atletaId}")
-    public ResponseEntity<List<Mensalidade>> listarPorAtleta(@PathVariable Long atletaId) {
-        return ResponseEntity.ok(mensalidadeService.listarPorAtleta(atletaId));
+    public ResponseEntity<Mensalidade> darBaixa(@PathVariable Long id) {
+        return mensalidadeRepository.findById(id).map(m -> {
+            m.setPago(true);
+            return ResponseEntity.ok(mensalidadeRepository.save(m));
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
