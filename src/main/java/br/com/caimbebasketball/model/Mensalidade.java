@@ -19,6 +19,7 @@ public class Mensalidade {
     private BigDecimal valor;
     private LocalDate dataVencimento;
     private Boolean pago;
+    private LocalDate dataPagamento;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -35,4 +36,8 @@ public class Mensalidade {
 
     public Boolean getPago() { return pago; }
     public void setPago(Boolean pago) { this.pago = pago; }
+
+    public LocalDate getDataPagamento() { return dataPagamento; }
+    public void setDataPagamento(LocalDate dataPagamento) { this.dataPagamento = dataPagamento; }
+
 }
